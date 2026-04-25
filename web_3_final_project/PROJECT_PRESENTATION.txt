@@ -1,0 +1,595 @@
+================================================================================
+AZURE LUXE HOTEL - PROJECT PRESENTATION
+================================================================================
+
+================================================================================
+SLIDE 1: PROJECT OVERVIEW
+================================================================================
+
+Azure Luxe Hotel
+A hotel booking and management system
+
+What it does:
+• Public room browsing and booking
+• Guest booking lookup without login
+• Customer self-service dashboards
+• Staff operational management
+• Admin oversight and controls
+
+Built with Laravel 12 + Blade templating
+
+
+================================================================================
+SLIDE 2: TECH STACK
+================================================================================
+
+Backend
+  • PHP 8.2
+  • Laravel 12 framework
+  • Eloquent ORM for data modeling
+
+Frontend
+  • Blade templating
+  • Vite for asset bundling
+  • Tailwind CSS 4
+  • Custom inline CSS for UI styling
+  • Google Fonts (Playfair Display, Raleway)
+
+Database
+  • SQLite (default)
+  • Supports MySQL, MariaDB, PostgreSQL, SQL Server
+
+Testing & Tools
+  • Pest for testing
+  • Laravel Tinker, Pint, Sail, Pail
+
+
+================================================================================
+SLIDE 3: USER ROLES & ACCESS LEVELS
+================================================================================
+
+Four user roles in the system:
+
+1. Guest / Public Visitor
+   • No login required
+   • Browse rooms and promo offers
+   • Search and view bookings using email
+
+2. Customer
+   • Registered and logged in
+   • Personal booking dashboard
+   • Create bookings with promo codes
+   • View booking history
+
+3. Staff
+   • Operational dashboard
+   • Update booking statuses
+   • Mark rooms as cleaned
+   • Monitor room availability
+
+4. Admin
+   • Full system administrative dashboard
+   • Manage users and promo codes
+   • View revenue and analytics
+   • Monitor hotel operations
+
+
+================================================================================
+SLIDE 4: PUBLIC VISITOR JOURNEY
+================================================================================
+
+Guest / Public User Flow
+
+1. Homepage
+   ↓
+2. Browse available rooms & promo offers
+   ↓
+3. Two paths:
+   
+   PATH A: Create booking as guest
+   → Fill in guest info (name, email, phone)
+   → Select check-in/check-out dates
+   → System calculates price with promo discount
+   → Booking confirmation page
+   → Can view booking later with email + reference
+
+   PATH B: Lookup existing booking
+   → Click "View Booking" in navbar
+   → Enter email + booking reference (ID or name)
+   → See full booking details
+   → Browse other bookings with same email
+
+
+================================================================================
+SLIDE 5: CUSTOMER JOURNEY
+================================================================================
+
+Registered Customer Flow
+
+1. Register or Login
+   • Public registration creates customer account
+   • Login redirects to /dashboard
+
+2. Customer Dashboard
+   • Quick stats: total bookings, upcoming, completed, total spent
+   • Browse personal booking history
+   • View booking details
+
+3. Create Booking
+   • Select room, dates, guest info
+   • Apply promo code
+   • System validates availability
+   • Creates booking, shows confirmation
+   • Booking appears in customer's booking list
+
+4. View Bookings
+   • List of all customer bookings (paginated)
+   • Sortable by date, status, etc.
+
+
+================================================================================
+SLIDE 6: STAFF DASHBOARD
+================================================================================
+
+Staff Operational Dashboard
+
+Real-time monitoring & actions:
+
+Stats at a glance
+• Total bookings
+• Confirmed bookings today
+• Available rooms
+• Guests checking in today
+• Dirty rooms needing cleaning
+
+Booking management
+• View recent bookings
+• See all bookings with filters
+• Update booking status (pending → confirmed → checked-in → checked-out)
+• Mark rooms as cleaned after guest checkout
+
+Room tracking
+• All rooms with booking status
+• Active guests (checked-in or confirmed)
+• Dirty rooms alert
+• Room availability count
+
+
+================================================================================
+SLIDE 7: ADMIN DASHBOARD
+================================================================================
+
+Admin Control Center
+
+Financial Overview
+• Total revenue (sum of all booking totals)
+• Total booking count
+• Occupancy rate (%)
+
+Analytics & Charts
+• Revenue by room category (bar chart)
+• Bookings by status (pie chart)
+• 30-day revenue trend (line chart)
+• Occupancy by room type breakdown
+
+Management & Control
+• User management (view all users, counts by role)
+• Promo code creation and management
+  - Set code, discount %, expiration
+  - Toggle active/inactive
+  - Delete codes
+• Staff member oversight
+• Dirty rooms alerts
+
+Visibility
+• Recent booking activity
+• All bookings with filters
+
+
+================================================================================
+SLIDE 8: FRONTEND ARCHITECTURE
+================================================================================
+
+Frontend Rendering & Styling
+
+Blade Templating
+• Dynamic HTML rendering on server
+• Full access to backend data
+• Supports authentication checks and role-based UI
+
+Visual Design
+• Custom inline CSS in Blade files
+• Hotel-branded color scheme (navy, ocean blue, gold accents)
+• Responsive layouts with flexbox/grid
+• Animated gradients and floating shapes
+• Card-based UI components
+• Status badges with color coding
+
+Asset Management
+• Vite for JavaScript/CSS bundling
+• Tailwind CSS available but mostly custom CSS used
+• Google Fonts for typography
+• Minimal static asset dependencies
+
+
+================================================================================
+SLIDE 9: VIEW STRUCTURE
+================================================================================
+
+Blade Views Organization
+
+Public Pages (no auth required)
+  • home.blade.php → Homepage with rooms & offers
+  • booking-lookup.blade.php → Guest booking search form
+  • booking-confirmation.blade.php → Post-booking confirmation
+  • guest-bookings.blade.php → Single booking detail
+  • guest-bookings-list.blade.php → Guest's booking list
+
+Auth Pages
+  • login-register.blade.php → Combined login & registration
+
+Protected Pages (auth required, role-specific)
+  • customer/dashboard.blade.php → Customer overview
+  • customer/bookings.blade.php → Customer booking list
+  • staff/dashboard.blade.php → Staff operations
+  • admin/dashboard.blade.php → Admin control panel
+  • admin/users.blade.php → User management
+
+
+================================================================================
+SLIDE 10: BACKEND ARCHITECTURE
+================================================================================
+
+Controller Organization by Feature
+
+AuthController
+  • Login, registration, logout
+  • Admin account creation for staff/admins
+  • Role-based redirect on login
+
+HomeController
+  • Public homepage: available rooms, categories, active promos
+
+BookingController
+  • Create booking (guest or customer)
+  • Update booking status
+  • Mark room cleaned after checkout
+
+GuestBookingController
+  • Lookup booking flow (email + reference)
+  • Show booking confirmation
+  • List all bookings for email
+
+CustomerController
+  • Customer dashboard (stats + bookings)
+  • Customer booking list
+
+StaffController
+  • Staff dashboard with operational data
+
+AdminController
+  • Admin dashboard with analytics
+  • User management page
+
+PromoCodeController
+  • Create, update, delete promo codes (admin only)
+
+
+================================================================================
+SLIDE 11: SERVICE LAYER
+================================================================================
+
+Reusable Business Logic & Transactions
+
+BookingService
+  • checkAvailability(roomId, checkIn, checkOut)
+    → Validates room status + date overlap checks
+  
+  • calculatePrice(roomId, checkIn, checkOut, promoCode)
+    → Days × base price - discount
+    → Returns calculated total
+  
+  • validatePromoCode(code)
+    → Checks active status and expiry
+    → Returns promo code object or null
+  
+  • createBooking(data)
+    → Database transaction wrapper
+    → Validates availability
+    → Calculates price
+    → Creates booking record
+    → Updates room status if walk-in
+
+RoomService
+  • getAvailableRooms(checkIn, checkOut, categoryId)
+    → Returns rooms available for date range
+    → Filters by category if specified
+  
+  • updateRoomStatus(roomId, status)
+    → Sets room to available, occupied, or dirty
+
+PromoCodeService
+  • validate(code)
+    → Returns valid promo code or null
+  
+  • applyDiscount(originalPrice, promoCode)
+    → Calculates and returns discounted price
+
+
+================================================================================
+SLIDE 12: AUTHENTICATION FLOW
+================================================================================
+
+Login & Role-Based Routing
+
+Public Registration
+  • Email, name, password validation
+  • Creates user with role = customer
+  • Immediate login & redirect to /dashboard
+
+Login Flow
+  • Email + password validation
+  • Laravel Auth::attempt() check
+  • Role-based redirect:
+    - admin → /admin dashboard
+    - staff → /staff dashboard
+    - customer → /dashboard
+    - default → homepage
+
+Logout
+  • Laravel Auth::logout() + session cleanup
+  • Redirect to homepage
+
+Admin Account Creation
+  • Only authenticated admins can access
+  • Create staff or admin users
+  • Set passwords for new accounts
+
+
+================================================================================
+SLIDE 13: BOOKING TRANSACTION FLOW
+================================================================================
+
+From Booking Form to Confirmation
+
+User (Guest or Customer) Fills Booking Form
+  ↓
+StoreBookingRequest Validates Input
+  ↓
+BookingController Receives Valid Data
+  ↓
+BookingService::createBooking() Begins Transaction
+  
+  1. checkAvailability()
+     • Room status = available?
+     • Date overlap with pending/confirmed/checked_in bookings?
+     
+  2. calculatePrice()
+     • Days = check_out - check_in
+     • Total = base_price × days
+     • Apply promo discount if code valid
+     
+  3. Create Booking Record
+     • Save all booking data to database
+     • user_id = null for guests, user ID for customers
+     
+  4. Update Room State
+     • If walk-in: set room to occupied
+     • Otherwise: room stays available (guest not checked in yet)
+     
+  5. Commit Transaction / Clear Cache
+  
+  ↓
+Response Depends on Caller Type
+  • Guest → Redirect to booking confirmation page
+  • Customer → Redirect to /customer/bookings
+  • AJAX → JSON response with booking ID
+
+
+================================================================================
+SLIDE 14: ROOM STATUS LIFECYCLE
+================================================================================
+
+Room States & Transitions
+
+AVAILABLE (initial state)
+  ├─ Pending booking created? → stays AVAILABLE
+  └─ Walk-in booking checked-in? → becomes OCCUPIED
+
+OCCUPIED
+  └─ Guest checked-out? → becomes DIRTY
+
+DIRTY
+  └─ Staff marks room cleaned? → becomes AVAILABLE
+
+Special Cases:
+• Booking cancelled/no-show with no other active bookings → room AVAILABLE
+• Multiple overlapping bookings → room OCCUPIED until all checked-out
+• Pending/confirmed bookings don't change room status automatically
+
+
+================================================================================
+SLIDE 15: DATABASE SCHEMA OVERVIEW
+================================================================================
+
+Core Tables
+
+users
+  id | name | email | password | role | timestamps
+
+room_categories
+  id | name | base_price | capacity | timestamps
+
+rooms
+  id | room_number | category_id (FK) | status | timestamps
+
+bookings
+  id | user_id (FK, nullable) | room_id (FK) | guest_name | guest_email
+  guest_phone | check_in (date) | check_out (date) | status | total_price
+  promo_code | timestamps
+
+promo_codes
+  id | code (unique) | discount_percent | is_active | expires_at | timestamps
+
+Supporting Tables:
+  password_reset_tokens | sessions | cache | jobs
+
+
+================================================================================
+SLIDE 16: KEY RELATIONSHIPS
+================================================================================
+
+Entity Relationships & Data Flow
+
+User → has many → Booking
+  • A customer can have multiple bookings
+  • Guests have bookings with user_id = null
+
+RoomCategory → has many → Room
+  • Category defines base price and capacity
+  • Multiple rooms per category (e.g., 10 "Deluxe" rooms)
+
+Room → has many → Booking
+  • A room can have multiple bookings (different dates)
+  • Status reflects current or most recent occupancy
+
+Booking → belongs to → User (nullable)
+  • Links to customer account if authenticated
+  • NULL for guest bookings
+
+Booking → belongs to → Room
+  • Each booking tied to exactly one room
+
+PromoCode (standalone)
+  • Referenced by booking.promo_code string (not FK)
+  • Used during price calculation
+
+
+================================================================================
+SLIDE 17: SEEDED DEMO DATA
+================================================================================
+
+Database Seeding
+
+On Fresh Setup, Seeders Create Sample Data:
+
+1. RoomCategorySeeder
+   → Room types with pricing (e.g., Standard, Deluxe, Suite)
+
+2. RoomSeeder
+   → Create rooms per category (e.g., 10 Deluxe rooms)
+
+3. UserSeeder
+   → Sample customers, staff, admin accounts
+
+4. PromoCodeSeeder
+   → Active promo codes with discounts
+
+5. BookingSeeder
+   → Sample bookings across various dates and statuses
+
+Run seeders with: php artisan db:seed
+
+
+================================================================================
+SLIDE 18: API & ROUTES SUMMARY
+================================================================================
+
+Key Routes (from routes/web.php)
+
+Public / Guest Routes
+  GET  /                             → HomeController@index
+  GET  /login                        → Show login form
+  POST /login                        → AuthController@login
+  POST /register                     → AuthController@register
+  GET  /bookings/lookup              → GuestBookingController@lookup
+  POST /bookings/search              → GuestBookingController@search
+  GET  /bookings/confirmation/{id}   → GuestBookingController@confirmation
+
+Booking Routes (Mixed Auth)
+  POST /bookings                     → BookingController@store
+  POST /bookings/{id}/update-status  → BookingController@updateStatus
+  POST /rooms/{id}/mark-cleaned      → BookingController@markRoomCleaned
+
+Authenticated Routes (Protected)
+  POST /logout                       → AuthController@logout
+  GET  /staff                        → StaffController@dashboard
+  GET  /admin                        → AdminController@dashboard
+  GET  /dashboard                    → CustomerController@dashboard
+  GET  /bookings                     → CustomerController@bookings
+  POST /api/promo-codes              → PromoCodeController@store
+
+
+================================================================================
+SLIDE 19: ENUMS & STANDARDIZATION
+================================================================================
+
+Enum Values for Type Safety
+
+UserRoleEnum
+  • CUSTOMER = 'customer'
+  • STAFF = 'staff'
+  • ADMIN = 'admin'
+
+BookingStatusEnum
+  • PENDING = 'pending'
+  • CONFIRMED = 'confirmed'
+  • CHECKED_IN = 'checked_in'
+  • CHECKED_OUT = 'checked_out'
+  • NO_SHOW = 'no_show'
+  • CANCELLED = 'cancelled'
+
+RoomStatusEnum
+  • AVAILABLE = 'available'
+  • OCCUPIED = 'occupied'
+  • DIRTY = 'dirty'
+
+Benefits:
+• Type-safe casting in models
+• IDE autocomplete support
+• Standard label() methods for UI display
+
+
+================================================================================
+SLIDE 20: SUMMARY & KEY TAKEAWAYS
+================================================================================
+
+Azure Luxe Hotel: Quick Facts
+
+Purpose
+• Single Laravel app supporting 4 user roles
+• Handles full booking lifecycle from browse to checkout
+
+Technology
+• Laravel 12 backend with Blade rendering
+• Custom CSS + Google Fonts frontend
+• SQLite database (configurable)
+
+Architecture
+• Controller + Service separation for business logic
+• Transaction-based booking creation
+• Nullable user_id for guest bookings
+
+Key Features
+• Public guest access (no login)
+• Role-based dashboards
+• Real-time room availability & status
+• Promo code support with auto-discount
+• Staff operational tooling
+• Admin analytics & management
+
+Database
+• 5 core tables + Laravel framework tables
+• Eloquent relationships for data modeling
+• Nullable foreign keys for guest workflow
+
+Next Steps
+• Run migrations and seeders for demo data
+• Customize email templates for booking confirmations
+• Extend admin dashboard with more analytics
+• Add booking cancellation/modification UI
+
+
+================================================================================
+END OF PRESENTATION
+================================================================================

@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Azure Luxe Hotel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-navy: #0A1128;
+            --royal-blue: #1E3A8A;
+            --ocean-blue: #2563EB;
+            --sky-blue: #3B82F6;
+            --light-blue: #60A5FA;
+            --ice-blue: #DBEAFE;
+            --pearl-white: #F8FAFC;
+            --silver: #CBD5E1;
+            --gold-accent: #FBBF24;
+            --platinum: #E5E7EB;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #06B6D4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Raleway', sans-serif;
+            background: linear-gradient(135deg, #F8FAFC 0%, #E0F2FE 50%, #DBEAFE 100%);
+            color: var(--deep-navy);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 320px;
+            background: linear-gradient(180deg, var(--deep-navy) 0%, #0F172A 50%, var(--royal-blue) 100%);
+            color: white;
+            padding: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 6px 0 40px rgba(10, 17, 40, 0.4);
+            z-index: 100;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 800"><defs><pattern id="sidebarPattern" width="40" height="40" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="400" height="800" fill="url(%23sidebarPattern)"/></svg>');
+            opacity: 1;
+        }
+
+        .sidebar-header {
+            padding: 3rem 2.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--gold-accent), #FCD34D);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 0 40px rgba(251, 191, 36, 0.7);
+            animation: logoSpin 10s linear infinite;
+        }
+
+        @keyframes logoSpin {
+            0% { transform: rotate(0deg); box-shadow: 0 0 40px rgba(251, 191, 36, 0.7); }
+            50% { transform: rotate(180deg); box-shadow: 0 0 60px rgba(251, 191, 36, 0.9); }
+            100% { transform: rotate(360deg); box-shadow: 0 0 40px rgba(251, 191, 36, 0.7); }
+        }
+
+        .admin-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--danger), #F87171);
+            color: white;
+            padding: 0.5rem 1.25rem;
+            border-radius: 25px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+            animation: adminPulse 2s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes adminPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .user-section {
+            padding: 2.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, var(--gold-accent), #FCD34D);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 15px 40px rgba(251, 191, 36, 0.5);
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            animation: avatarGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes avatarGlow {
+            0%, 100% { 
+                box-shadow: 0 15px 40px rgba(251, 191, 36, 0.5);
+                transform: translateY(0);
+            }
+            50% { 
+                box-shadow: 0 20px 50px rgba(251, 191, 36, 0.8);
+                transform: translateY(-5px);
+            }
+        }
+
+        .user-info {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .user-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-role {
+            color: var(--gold-accent);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem 2.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(180deg, var(--gold-accent), #FCD34D);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(251, 191, 36, 0.15), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            transform: scaleY(1);
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            opacity: 1;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: white;
+            padding-left: 3rem;
+        }
+
+        .nav-icon {
+            font-size: 1.75rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .logout-section {
+            padding: 2.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .btn {
+            padding: 1.25rem 2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Raleway', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--gold-accent);
+            color: var(--gold-accent);
+            width: 100%;
+        }
+
+        .btn-outline:hover {
+            background: var(--gold-accent);
+            color: var(--deep-navy);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.5);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 320px;
+            flex: 1;
+            padding: 3rem;
+        }
+
+        .header {
+            margin-bottom: 3.5rem;
+            animation: slideInDown 1s ease-out;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--deep-navy), var(--ocean-blue), var(--sky-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            font-size: 1.35rem;
+            color: var(--royal-blue);
+            font-weight: 500;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            box-shadow: 0 15px 50px rgba(37, 99, 235, 0.12);
+            animation: fadeInScale 0.8s ease-out backwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--sky-blue), var(--gold-accent));
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 25px 70px rgba(37, 99, 235, 0.3);
+            border-color: var(--sky-blue);
+        }
+
+        .stat-card:hover::after {
+            opacity: 1;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--ice-blue), var(--light-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.3);
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 0.6rem 1.25rem;
+            border-radius: 50px;
+        }
+
+        .trend-up {
+            background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+            color: #065F46;
+        }
+
+        .stat-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--ocean-blue);
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-label {
+            color: var(--royal-blue);
+            font-size: 1.1rem;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Charts Section */
+        .chart-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 3rem;
+            box-shadow: 0 15px 50px rgba(37, 99, 235, 0.12);
+            border: 2px solid transparent;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(59, 130, 246, 0.05));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .section:hover {
+            border-color: var(--ice-blue);
+            box-shadow: 0 20px 60px rgba(37, 99, 235, 0.2);
+        }
+
+        .section:hover::before {
+            opacity: 1;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid var(--ice-blue);
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--deep-navy);
+        }
+
+        .chart-placeholder {
+            height: 350px;
+            background: linear-gradient(135deg, var(--pearl-white), var(--ice-blue));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--royal-blue);
+            font-size: 1.5rem;
+            font-weight: 600;
+            border: 3px dashed var(--light-blue);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Revenue Card */
+        .revenue-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.75rem 0;
+            border-bottom: 2px solid var(--ice-blue);
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .revenue-item:hover {
+            padding-left: 1rem;
+            background: linear-gradient(90deg, rgba(219, 234, 254, 0.5), transparent);
+        }
+
+        .revenue-item:last-child {
+            border-bottom: none;
+        }
+
+        .revenue-label {
+            font-weight: 600;
+            color: var(--royal-blue);
+            font-size: 1.1rem;
+        }
+
+        .revenue-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--ocean-blue);
+        }
+
+        /* Table Section */
+        .table-section {
+            background: white;
+            border-radius: 25px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 15px 50px rgba(37, 99, 235, 0.12);
+        }
+
+        .search-filter-bar {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            padding: 1.25rem 2rem;
+            border: 2px solid var(--ice-blue);
+            border-radius: 50px;
+            font-family: 'Raleway', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--sky-blue);
+            box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.1);
+        }
+
+        .filter-select {
+            padding: 1.25rem 2rem;
+            border: 2px solid var(--ice-blue);
+            border-radius: 50px;
+            background: white;
+            font-family: 'Raleway', sans-serif;
+            font-size: 1rem;
+            color: var(--royal-blue);
+            cursor: pointer;
+            min-width: 180px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--sky-blue);
+            box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--sky-blue), var(--ocean-blue));
+            color: white;
+            padding: 1.25rem 3rem;
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.5);
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--ice-blue), #BFDBFE);
+        }
+
+        th {
+            padding: 1.75rem 1.5rem;
+            text-align: left;
+            font-weight: 800;
+            color: var(--ocean-blue);
+            border-bottom: 3px solid var(--sky-blue);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1.5px;
+        }
+
+        td {
+            padding: 2rem 1.5rem;
+            border-bottom: 2px solid var(--ice-blue);
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: linear-gradient(90deg, rgba(219, 234, 254, 0.4), transparent);
+            transform: translateX(8px);
+        }
+
+        .status-badge {
+            padding: 0.75rem 1.75rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            display: inline-block;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+            color: #92400E;
+        }
+
+        .status-confirmed {
+            background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+            color: #065F46;
+        }
+
+        .status-checked-in {
+            background: linear-gradient(135deg, var(--ice-blue), #BFDBFE);
+            color: var(--ocean-blue);
+        }
+
+        .status-checked-out {
+            background: linear-gradient(135deg, #E5E7EB, #D1D5DB);
+            color: #374151;
+        }
+
+        .status-cancelled {
+            background: linear-gradient(135deg, #FEE2E2, #FECACA);
+            color: #991B1B;
+        }
+
+        .date-badge {
+            background: linear-gradient(135deg, #F0F9FF, #E0F2FE);
+            color: var(--ocean-blue);
+            padding: 0.65rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            letter-spacing: 0.3px;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-action {
+            padding: 0.85rem 1.75rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, var(--info), #06B6D4);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, var(--danger), #F87171);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 6rem 2rem;
+            color: var(--royal-blue);
+        }
+
+        .empty-icon {
+            font-size: 6rem;
+            margin-bottom: 2rem;
+            opacity: 0.4;
+        }
+
+        .empty-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            height: 500px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 0.5rem;
+        }
+
+        .activity-feed::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .activity-feed::-webkit-scrollbar-track {
+            background: rgba(203, 213, 225, 0.2);
+            border-radius: 10px;
+        }
+
+        .activity-feed::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--light-blue), var(--ocean-blue));
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .activity-feed::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--ocean-blue), var(--royal-blue));
+        }
+
+        .activity-item {
+            padding: 1.75rem;
+            border-left: 4px solid var(--light-blue);
+            margin-bottom: 1.5rem;
+            background: var(--pearl-white);
+            border-radius: 0 15px 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: var(--ice-blue);
+            border-left-color: var(--ocean-blue);
+            transform: translateX(8px);
+        }
+
+        .activity-time {
+            color: var(--royal-blue);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .activity-text {
+            color: var(--deep-navy);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        @media (max-width: 1200px) {
+            .chart-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-filter-bar {
+                flex-direction: column;
+            }
+
+            .search-box,
+            .filter-select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">👑</div>
+                <div>
+                    <div>Azure Luxe</div>
+                    <div class="admin-badge">ADMIN PORTAL</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="user-section">
+            <div class="user-avatar">👨‍💼</div>
+            <div class="user-info">
+                <div class="user-name">Michael Anderson</div>
+                <div class="user-role">System Administrator</div>
+            </div>
+        </div>
+
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#overview" class="nav-link active" onclick="showSection('overview')">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Overview</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#analytics" class="nav-link" onclick="showSection('analytics')">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#bookings-admin" class="nav-link" onclick="showSection('bookings-admin')">
+                        <span class="nav-icon">📅</span>
+                        <span class="nav-text">All Bookings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#staff" class="nav-link" onclick="showSection('staff')">
+                        <span class="nav-icon">👥</span>
+                        <span class="nav-text">Staff</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#settings" class="nav-link" onclick="showSection('settings')">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="client-staff-dashboard.html" class="nav-link">
+                        <span class="nav-icon">🏢</span>
+                        <span class="nav-text">Staff Portal</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="logout-section">
+            <a href="client-website.html" class="btn btn-outline">Back to Website</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Overview Section -->
+        <div id="overview" class="content-section">
+            <div class="header">
+                <h1>Admin Dashboard</h1>
+                <p>Comprehensive hotel analytics and management</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-trend trend-up">↑ 12.5%</div>
+                    </div>
+                    <div class="stat-value" id="totalRevenue">$0</div>
+                    <div class="stat-label">Total Revenue (MTD)</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-trend trend-up">↑ 8.3%</div>
+                    </div>
+                    <div class="stat-value" id="totalBookingsAdmin">0</div>
+                    <div class="stat-label">Total Bookings</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-trend trend-up">↑ 15.2%</div>
+                    </div>
+                    <div class="stat-value" id="occupancyRate">0%</div>
+                    <div class="stat-label">Occupancy Rate</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-trend trend-up">↑ 0.3</div>
+                    </div>
+                    <div class="stat-value">4.8</div>
+                    <div class="stat-label">Average Rating</div>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">Revenue Trends</h2>
+                    </div>
+                    <div class="chart-placeholder">
+                        📈 Revenue chart visualization
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">Revenue</h2>
+                    </div>
+                    <div>
+                        <div class="revenue-item">
+                            <div class="revenue-label">Rooms</div>
+                            <div class="revenue-amount" id="roomRevenue">$0</div>
+                        </div>
+                        <div class="revenue-item">
+                            <div class="revenue-label">Services</div>
+                            <div class="revenue-amount">$3,240</div>
+                        </div>
+                        <div class="revenue-item">
+                            <div class="revenue-label">Dining</div>
+                            <div class="revenue-amount">$2,180</div>
+                        </div>
+                        <div class="revenue-item">
+                            <div class="revenue-label">Events</div>
+                            <div class="revenue-amount">$4,500</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Activity</h2>
+                </div>
+                <div class="activity-feed" id="activityFeed">
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-text">No recent activity</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div id="analytics" class="content-section" style="display: none;">
+            <div class="header">
+                <h1>Analytics</h1>
+                <p>Detailed performance metrics</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-value" id="avgStayDuration">0</div>
+                    <div class="stat-label">Avg. Stay (days)</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">💵</div>
+                    <div class="stat-value" id="avgBookingValue">$0</div>
+                    <div class="stat-label">Avg. Booking Value</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🔄</div>
+                    <div class="stat-value">23%</div>
+                    <div class="stat-label">Return Guest Rate</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-value">18</div>
+                    <div class="stat-label">Lead Time (days)</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Performance Charts</h2>
+                </div>
+                <div class="chart-placeholder">
+                    📊 Analytics visualization
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings Admin Section -->
+        <div id="bookings-admin" class="content-section" style="display: none;">
+            <div class="header">
+                <h1>Booking Management</h1>
+                <p>Complete reservation control</p>
+            </div>
+
+            <div class="table-section">
+                <div class="section-header">
+                    <h2 class="section-title">All Reservations</h2>
+                </div>
+                
+                <div class="search-filter-bar">
+                    <input type="text" class="search-box" placeholder="Search by guest name, email, or booking ID..." id="adminSearch" oninput="filterAdminBookings()">
+                    <select class="filter-select" id="statusFilterAdmin" onchange="filterAdminBookings()">
+                        <option value="all">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Checked-in">Checked-in</option>
+                        <option value="Checked-out">Checked-out</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <button class="btn btn-primary">Export Report</button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Guest</th>
+                                <th>Contact</th>
+                                <th>Room</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminBookingsBody">
+                            <tr>
+                                <td colspan="9">
+                                    <div class="empty-state">
+                                        <div class="empty-icon">📭</div>
+                                        <div class="empty-text">No bookings found</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Staff Section -->
+        <div id="staff" class="content-section" style="display: none;">
+            <div class="header">
+                <h1>Staff Management</h1>
+                <p>Manage hotel staff and permissions</p>
+            </div>
+
+            <div class="table-section">
+                <div class="section-header">
+                    <h2 class="section-title">Staff Directory</h2>
+                    <button class="btn btn-primary">Add New Staff</button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Department</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Sarah Johnson</strong></td>
+                                <td>Front Desk Staff</td>
+                                <td>Reception</td>
+                                <td>sarah.j@azureluxe.com</td>
+                                <td>+1 (555) 123-4567</td>
+                                <td><span class="status-badge status-confirmed">Active</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-action btn-edit">Edit</button>
+                                        <button class="btn-action btn-delete">Remove</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>James Smith</strong></td>
+                                <td>Housekeeping Manager</td>
+                                <td>Housekeeping</td>
+                                <td>james.s@azureluxe.com</td>
+                                <td>+1 (555) 234-5678</td>
+                                <td><span class="status-badge status-confirmed">Active</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-action btn-edit">Edit</button>
+                                        <button class="btn-action btn-delete">Remove</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Emily Davis</strong></td>
+                                <td>Concierge</td>
+                                <td>Guest Services</td>
+                                <td>emily.d@azureluxe.com</td>
+                                <td>+1 (555) 345-6789</td>
+                                <td><span class="status-badge status-confirmed">Active</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-action btn-edit">Edit</button>
+                                        <button class="btn-action btn-delete">Remove</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div id="settings" class="content-section" style="display: none;">
+            <div class="header">
+                <h1>System Settings</h1>
+                <p>Configure hotel management system</p>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">General Settings</h2>
+                </div>
+                <div style="line-height: 2.5; color: var(--royal-blue); font-size: 1.1rem;">
+                    <p><strong>🏨 Hotel Name:</strong> Azure Luxe Hotel</p>
+                    <p><strong>📍 Location:</strong> 123 Ocean Drive, Paradise</p>
+                    <p><strong>📞 Contact:</strong> +1 (555) 123-4567</p>
+                    <p><strong>✉️ Email:</strong> info@azureluxe.com</p>
+                    <p><strong>⏰ Check-in:</strong> 3:00 PM</p>
+                    <p><strong>⏰ Check-out:</strong> 11:00 AM</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">System Information</h2>
+                </div>
+                <div style="line-height: 2.5; color: var(--royal-blue); font-size: 1.1rem;">
+                    <p><strong>📊 Platform:</strong> Version 3.0.1</p>
+                    <p><strong>🔒 Security:</strong> Active & Encrypted</p>
+                    <p><strong>💾 Database:</strong> Connected</p>
+                    <p><strong>🔄 Last Backup:</strong> March 3, 2026 - 2:00 AM</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.closest('.nav-link').classList.add('active');
+        }
+
+        function loadAdminData() {
+            const bookings = JSON.parse(localStorage.getItem('hotelBookings') || '[]');
+            
+            const totalRevenue = bookings.reduce((sum, booking) => {
+                const price = parseInt(booking.price.replace('$', ''));
+                const checkIn = new Date(booking.checkIn);
+                const checkOut = new Date(booking.checkOut);
+                const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+                return sum + (price * nights);
+            }, 0);
+
+            const activeBookings = bookings.filter(b => ['Confirmed', 'Checked-in'].includes(b.status)).length;
+            const occupancyRate = Math.round((activeBookings / 6) * 100);
+
+            const avgStay = bookings.length > 0 ? 
+                bookings.reduce((sum, booking) => {
+                    const checkIn = new Date(booking.checkIn);
+                    const checkOut = new Date(booking.checkOut);
+                    return sum + Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+                }, 0) / bookings.length : 0;
+
+            const avgValue = bookings.length > 0 ? totalRevenue / bookings.length : 0;
+
+            document.getElementById('totalRevenue').textContent = '$' + totalRevenue.toLocaleString();
+            document.getElementById('roomRevenue').textContent = '$' + totalRevenue.toLocaleString();
+            document.getElementById('totalBookingsAdmin').textContent = bookings.length;
+            document.getElementById('occupancyRate').textContent = occupancyRate + '%';
+            document.getElementById('avgStayDuration').textContent = avgStay.toFixed(1);
+            document.getElementById('avgBookingValue').textContent = '$' + avgValue.toFixed(0);
+
+            displayAdminBookings(bookings);
+            displayActivity(bookings);
+        }
+
+        function getCheckInStatusBadge(status) {
+            if (['Checked-in', 'Checked-out'].includes(status)) {
+                return `<span class="status-badge status-checked-in">✓ Checked-in</span>`;
+            } else if (status === 'Cancelled') {
+                return `<span class="status-badge status-cancelled">Cancelled</span>`;
+            }
+            return `<span class="status-badge status-pending">⏳ Pending</span>`;
+        }
+
+        function getCheckOutStatusBadge(status) {
+            if (status === 'Checked-out') {
+                return `<span class="status-badge status-checked-out">✓ Checked-out</span>`;
+            } else if (status === 'Cancelled') {
+                return `<span class="status-badge status-cancelled">Cancelled</span>`;
+            }
+            return `<span class="status-badge status-pending">⏳ Pending</span>`;
+        }
+
+        function displayAdminBookings(bookings) {
+            const tbody = document.getElementById('adminBookingsBody');
+
+            if (bookings.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">No bookings found</div></div></td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = bookings.map((booking, index) => {
+                const price = parseInt(booking.price.replace('$', ''));
+                const checkIn = new Date(booking.checkIn);
+                const checkOut = new Date(booking.checkOut);
+                const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+                const total = price * nights;
+
+                return `
+                    <tr>
+                        <td><strong>#${String(index + 1).padStart(4, '0')}</strong></td>
+                        <td><strong>${booking.guestName}</strong></td>
+                        <td><div style="font-size: 0.9rem;">${booking.guestEmail}<br>${booking.guestPhone}</div></td>
+                        <td>${booking.roomNumber}</td>
+                        <td><span class="date-badge">📅 ${booking.checkIn}</span></td>
+                        <td><span class="date-badge">📅 ${booking.checkOut}</span></td>
+                        <td><strong>$${total}</strong></td>
+                        <td><span class="status-badge status-${booking.status.toLowerCase().replace(' ', '-')}">${booking.status}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-edit">Edit</button>
+                                <button class="btn-action btn-delete" onclick="deleteBooking(${index})">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function displayActivity(bookings) {
+            const feed = document.getElementById('activityFeed');
+            
+            if (bookings.length === 0) {
+                feed.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">No recent activity</div></div>`;
+                return;
+            }
+
+            const recentBookings = bookings.slice(-10).reverse();
+            feed.innerHTML = recentBookings.map(booking => {
+                const bookingDate = new Date(booking.bookingDate);
+                const timeAgo = getTimeAgo(bookingDate);
+                
+                return `
+                    <div class="activity-item">
+                        <div class="activity-time">${timeAgo}</div>
+                        <div class="activity-text">
+                            <strong>${booking.guestName}</strong> booked ${booking.roomNumber} 
+                            from ${booking.checkIn} to ${booking.checkOut}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            
+            if (seconds < 60) return 'Just now';
+            if (seconds < 3600) return Math.floor(seconds / 60) + ' minutes ago';
+            if (seconds < 86400) return Math.floor(seconds / 3600) + ' hours ago';
+            return Math.floor(seconds / 86400) + ' days ago';
+        }
+
+        function filterAdminBookings() {
+            const search = document.getElementById('adminSearch').value.toLowerCase();
+            const status = document.getElementById('statusFilterAdmin').value;
+            const rows = document.querySelectorAll('#adminBookingsBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const statusMatch = status === 'all' || row.textContent.includes(status);
+                const searchMatch = text.includes(search);
+                
+                row.style.display = (searchMatch && statusMatch) ? '' : 'none';
+            });
+        }
+
+        function deleteBooking(index) {
+            if (confirm('Are you sure you want to delete this booking?')) {
+                const bookings = JSON.parse(localStorage.getItem('hotelBookings') || '[]');
+                bookings.splice(index, 1);
+                localStorage.setItem('hotelBookings', JSON.stringify(bookings));
+                loadAdminData();
+            }
+        }
+
+        loadAdminData();
+        setInterval(loadAdminData, 30000);
+    </script>
+</body>
+</html>

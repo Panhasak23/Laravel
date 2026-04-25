@@ -1,0 +1,188 @@
+AZURE LUXE HOTEL - PROJECT BREAKDOWN
+
+1) Purpose
+- Azure Luxe Hotel is a hotel booking and management system.
+- It supports public browsing, guest booking lookup, customer self-service, staff operations, and admin management.
+- The app covers room inventory, bookings, promo codes, user roles, and dashboard-based workflows.
+
+2) Tech Stack
+- Backend: PHP 8.2
+- Framework: Laravel 12
+- Templating: Blade
+- Frontend tooling: Vite
+- Styling: Inline CSS in Blade views, plus Tailwind CSS 4 available through the frontend toolchain
+- Auth/session support: Laravel authentication and session-based login
+- Database: SQLite by default in config, with support for MySQL, MariaDB, PostgreSQL, and SQL Server
+- Testing: Pest
+- Supporting packages: Laravel Tinker, Laravel Pint, Laravel Sail, Laravel Pail
+
+3) Main Users And Features
+- Guest / Public visitor
+  - Browse the hotel homepage
+  - View public promo offers
+  - Use the booking lookup flow without logging in
+  - Search bookings by email and booking reference
+  - View booking confirmation and booking details
+
+- Customer
+  - Register and log in
+  - Access a personal dashboard
+  - View their bookings
+  - Create bookings as an authenticated user
+  - Use promo codes during booking flow where supported
+
+- Staff
+  - Log in to a staff dashboard
+  - Manage operational booking tasks
+  - Update booking status
+  - Mark rooms as cleaned
+  - Work with room availability and room state
+
+- Admin
+  - Log in to an admin dashboard
+  - View and manage users
+  - Manage promo codes
+  - Review booking activity and hotel data
+  - Oversee the overall system from the dashboard
+
+4) Frontend Overview
+- The project uses Blade-rendered pages for the UI.
+- Most visible screens are built with custom inline CSS rather than a shared CSS framework layout.
+- Google Fonts are used heavily for the hotel branding look, especially Playfair Display and Raleway.
+- The visual style is polished and hotel-themed, with gradients, cards, tables, badges, and animated sections.
+- Vite is present for asset bundling, so the project can extend into a more structured frontend build when needed.
+
+5) Blade / View Structure
+- Layouts
+  - resources/views/layouts/app.blade.php: base Blade layout wrapper
+
+- Public pages
+  - resources/views/pages/public/home.blade.php: landing page and offers
+  - resources/views/pages/public/booking-lookup.blade.php: guest booking search form
+  - resources/views/pages/public/booking-confirmation.blade.php: guest confirmation page
+  - resources/views/pages/public/guest-bookings.blade.php: single guest booking detail page
+  - resources/views/pages/public/guest-bookings-list.blade.php: multiple bookings for one email
+
+- Authentication pages
+  - resources/views/pages/auth/login-register.blade.php: login and registration UI
+
+- Customer pages
+  - resources/views/pages/customer/dashboard.blade.php: customer dashboard
+  - resources/views/pages/customer/bookings.blade.php: customer booking list
+
+- Staff pages
+  - resources/views/pages/staff/dashboard.blade.php: staff dashboard
+
+- Admin pages
+  - resources/views/pages/admin/dashboard.blade.php: admin dashboard
+  - resources/views/pages/admin/users.blade.php: user management page
+
+6) Backend Structure
+- The backend is organized around role-based controllers and service classes.
+
+- Authentication and account control
+  - AuthController handles login, registration, logout, and admin-created staff/admin accounts.
+  - Login redirects users by role to /admin, /staff, or /dashboard.
+  - Public registration always creates a customer account.
+  - Admins can create staff or admin users from the backend.
+
+- Booking flow
+  - BookingController handles booking creation, booking status updates, and room cleaning updates.
+  - Booking creation uses StoreBookingRequest validation before data reaches the controller.
+  - BookingService wraps the core booking logic in a database transaction.
+  - The booking flow checks room availability, calculates total price, applies promo discounts, saves the booking, then updates room state when needed.
+  - Guest bookings are supported because user_id can be null.
+
+- Guest booking lookup
+  - GuestBookingController provides the public lookup and confirmation flow.
+  - Guests can search using email plus booking reference.
+  - The controller loads room and category data so the confirmation pages can display full booking details.
+
+- Dashboards
+  - HomeController builds the public homepage view with available rooms, categories, and active promo codes.
+  - CustomerController loads only the authenticated customer’s bookings and summary stats.
+  - StaffController loads operational booking data, active guests, dirty rooms, and room availability.
+  - AdminController loads revenue totals, booking activity, staff lists, promo codes, chart data, and dirty room alerts.
+
+- Promo code handling
+  - PromoCodeController lets admins create, update, and delete promo codes.
+  - PromoCodeService validates whether a promo code is active and unexpired.
+  - Promo discounts are applied during price calculation.
+
+- Room logic
+  - RoomService returns available rooms for a date range and optional category.
+  - Booking updates can move a room between available, occupied, and dirty states.
+
+- Data modeling
+  - Models use Eloquent relationships for users, rooms, room categories, bookings, and promo codes.
+  - Enums standardize user roles and booking/room statuses.
+  - Booking status values are pending, confirmed, checked_in, checked_out, no_show, and cancelled.
+  - Room status values are available, occupied, and dirty.
+
+7) Database Schema
+- users
+  - name
+  - email
+  - password
+  - role
+  - standard Laravel timestamps and auth fields
+  - role is stored as a string and mapped to an enum
+
+- room_categories
+  - name
+  - base_price
+  - capacity
+  - represents room types and pricing tiers
+
+- rooms
+  - room_number
+  - category_id
+  - status
+  - each room belongs to a room category
+  - status values include available, occupied, and dirty
+
+- bookings
+  - user_id nullable
+  - room_id
+  - guest_name
+  - guest_email
+  - guest_phone
+  - check_in
+  - check_out
+  - status
+  - total_price
+  - promo_code
+  - bookings can belong to a registered user or be created by a guest
+  - status values include pending, confirmed, checked_in, checked_out, no_show, and cancelled
+
+- promo_codes
+  - code
+  - discount_percent
+  - is_active
+  - expires_at
+  - used for public offers and admin promo management
+
+- framework/infrastructure tables
+  - password_reset_tokens
+  - sessions
+  - cache
+  - jobs
+
+8) Key Relationships
+- User has many bookings.
+- RoomCategory has many rooms.
+- Room belongs to a room category and has many bookings.
+- Booking belongs to a user and belongs to a room.
+- Promo codes are managed separately and linked into booking/offers logic by code value.
+
+9) Seeded Data
+- The main seeder runs:
+  - RoomCategorySeeder
+  - RoomSeeder
+  - UserSeeder
+  - PromoCodeSeeder
+  - BookingSeeder
+- That means the project ships with sample hotel data for testing and demo use.
+
+10) Short Summary
+- This is a Laravel hotel management application with role-based access, public guest booking lookup, customer self-service, staff operations, admin control, and database-backed promo code management.
