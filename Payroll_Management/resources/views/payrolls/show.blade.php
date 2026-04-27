@@ -7,26 +7,28 @@
 
 <div class="bg-white shadow-md rounded-lg p-8 max-w-2xl">
     <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Employee</label>
-        <p class="text-xl font-semibold">{{ $payroll->employee->name ?? 'N/A' }}</p>
-        <p class="text-gray-600">{{ $payroll->employee->position ?? 'N/A' }}</p>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Employee Name</label>
+        <p class="text-xl font-semibold">{{ $payroll->employee_name }}</p>
     </div>
 
     <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Period</label>
-        <p class="text-xl">{{ $payroll->period }}</p>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Salary</label>
+        <p class="text-xl">${{ number_format($payroll->salary, 2) }}</p>
     </div>
 
     <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
-        <p class="text-2xl font-bold text-green-600">${{ number_format($payroll->amount, 2) }}</p>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Bonus</label>
+        <p class="text-xl">${{ number_format($payroll->bonus, 2) }}</p>
+    </div>
+
+    <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Deduction</label>
+        <p class="text-xl">${{ number_format($payroll->deduction, 2) }}</p>
     </div>
 
     <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-        <span class="px-3 py-1 text-sm font-semibold rounded-full {{ $payroll->status == 'paid' ? 'bg-green-100 text-green-800' : ($payroll->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-            {{ ucfirst($payroll->status) }}
-        </span>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Net Salary</label>
+        <p class="text-2xl font-bold text-green-600">${{ number_format($payroll->salary + $payroll->bonus - $payroll->deduction, 2) }}</p>
     </div>
 
     <div class="mb-6">

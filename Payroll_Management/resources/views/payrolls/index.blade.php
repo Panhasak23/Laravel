@@ -11,24 +11,24 @@
     <table class="min-w-full bg-white shadow-md rounded-lg">
         <thead class="bg-gray-50">
             <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Name</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salary</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bonus</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deduction</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Salary</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($payrolls as $payroll)
             <tr class="{{ $loop->even ? 'bg-gray-50' : 'bg-white' }}">
-                <td class="px-6 py-4 whitespace-nowrap">{{ $payroll->employee->name ?? 'N/A' }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ $payroll->period }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">${{ number_format($payroll->amount, 2) }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $payroll->status == 'paid' ? 'bg-green-100 text-green-800' : ($payroll->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                        {{ ucfirst($payroll->status) }}
-                    </span>
-                </td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ $payroll->id }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ $payroll->employee_name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${{ number_format($payroll->salary, 2) }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${{ number_format($payroll->bonus, 2) }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${{ number_format($payroll->deduction, 2) }}</td>
+                <td class="px-6 py-4 whitespace-nowrap font-semibold text-green-700">${{ number_format($payroll->salary + $payroll->bonus - $payroll->deduction, 2) }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <a href="{{ route('payrolls.show', $payroll) }}" class="text-indigo-600 hover:text-indigo-900 mr-4">View</a>
                     <a href="{{ route('payrolls.edit', $payroll) }}" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</a>
@@ -41,7 +41,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="5" class="px-6 py-4 text-center text-gray-500">No payrolls found.</td>
+                <td colspan="7" class="px-6 py-4 text-center text-gray-500">No payrolls found.</td>
             </tr>
             @endforelse
         </tbody>

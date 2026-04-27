@@ -11,7 +11,7 @@ class PayrollController extends Controller
      */
     public function index()
     {
-        $payrolls = \App\Models\Payroll::with('employee')->paginate(10);
+        $payrolls = \App\Models\Payroll::latest()->paginate(10);
         return view('payrolls.index', compact('payrolls'));
     }
 
@@ -20,8 +20,7 @@ class PayrollController extends Controller
      */
     public function create()
     {
-        $employees = \App\Models\Employee::all();
-        return view('payrolls.create', compact('employees'));
+        return view('payrolls.create');
     }
 
     /**
@@ -30,10 +29,10 @@ class PayrollController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'employee_id' => 'required|exists:employees,id',
-            'period' => 'required|string|max:7',
-            'amount' => 'required|numeric|min:0',
-            'status' => 'required|in:pending,paid,cancelled',
+            'employee_name' => 'required|string|max:255',
+            'salary' => 'required|integer|min:0',
+            'bonus' => 'required|integer|min:0',
+            'deduction' => 'required|integer|min:0',
         ]);
 
         \App\Models\Payroll::create($validated);
@@ -46,7 +45,7 @@ class PayrollController extends Controller
      */
     public function show(string $id)
     {
-        $payroll = \App\Models\Payroll::with('employee')->findOrFail($id);
+        $payroll = \App\Models\Payroll::findOrFail($id);
         return view('payrolls.show', compact('payroll'));
     }
 
@@ -55,9 +54,8 @@ class PayrollController extends Controller
      */
     public function edit(string $id)
     {
-        $payroll = \App\Models\Payroll::with('employee')->findOrFail($id);
-        $employees = \App\Models\Employee::all();
-        return view('payrolls.edit', compact('payroll', 'employees'));
+        $payroll = \App\Models\Payroll::findOrFail($id);
+        return view('payrolls.edit', compact('payroll'));
     }
 
     /**
@@ -68,10 +66,10 @@ class PayrollController extends Controller
         $payroll = \App\Models\Payroll::findOrFail($id);
 
         $validated = $request->validate([
-            'employee_id' => 'required|exists:employees,id',
-            'period' => 'required|string|max:7',
-            'amount' => 'required|numeric|min:0',
-            'status' => 'required|in:pending,paid,cancelled',
+            'employee_name' => 'required|string|max:255',
+            'salary' => 'required|integer|min:0',
+            'bonus' => 'required|integer|min:0',
+            'deduction' => 'required|integer|min:0',
         ]);
 
         $payroll->update($validated);

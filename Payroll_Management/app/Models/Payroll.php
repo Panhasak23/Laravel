@@ -12,19 +12,10 @@ class Payroll extends Model
     protected $table = 'payrolls';
 
     protected $fillable = [
-        'employee_id',
-        'period',
-        'amount',
-        'status',
+        'employee_name',
+        'salary',
+        'bonus',
+        'deduction',
     ];
-
-    protected $casts = [
-        'amount' => 'decimal:2',
-    ];
-
-    public function employee()
-    {
-        return $this->belongsTo(Employee::class);
-    }
 }
 

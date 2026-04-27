@@ -8,42 +8,33 @@
 <form action="{{ route('payrolls.store') }}" method="POST" class="max-w-md">
     @csrf
     <div class="mb-4">
-        <label for="employee_id" class="block text-sm font-medium text-gray-700 mb-2">Employee</label>
-        <select name="employee_id" id="employee_id" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" required>
-            <option value="">Select Employee</option>
-            @foreach ($employees as $employee)
-                <option value="{{ $employee->id }}">{{ $employee->name }} ({{ $employee->position }})</option>
-            @endforeach
-        </select>
-        @error('employee_id')
+        <label for="employee_name" class="block text-sm font-medium text-gray-700 mb-2">Employee Name</label>
+        <input type="text" name="employee_name" id="employee_name" value="{{ old('employee_name') }}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" required>
+        @error('employee_name')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
         @enderror
     </div>
 
     <div class="mb-4">
-        <label for="period" class="block text-sm font-medium text-gray-700 mb-2">Period (YYYY-MM)</label>
-        <input type="text" name="period" id="period" value="{{ old('period') }}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="2024-10" required>
-        @error('period')
+        <label for="salary" class="block text-sm font-medium text-gray-700 mb-2">Salary</label>
+        <input type="number" name="salary" id="salary" value="{{ old('salary') }}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" min="0" required>
+        @error('salary')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
         @enderror
     </div>
 
     <div class="mb-4">
-        <label for="amount" class="block text-sm font-medium text-gray-700 mb-2">Amount</label>
-        <input type="number" step="0.01" name="amount" id="amount" value="{{ old('amount') }}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" min="0" required>
-        @error('amount')
+        <label for="bonus" class="block text-sm font-medium text-gray-700 mb-2">Bonus</label>
+        <input type="number" name="bonus" id="bonus" value="{{ old('bonus', 0) }}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" min="0" required>
+        @error('bonus')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
         @enderror
     </div>
 
     <div class="mb-6">
-        <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-        <select name="status" id="status" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" required>
-            <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-            <option value="paid" {{ old('status') == 'paid' ? 'selected' : '' }}>Paid</option>
-            <option value="cancelled" {{ old('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-        </select>
-        @error('status')
+        <label for="deduction" class="block text-sm font-medium text-gray-700 mb-2">Deduction</label>
+        <input type="number" name="deduction" id="deduction" value="{{ old('deduction', 0) }}" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" min="0" required>
+        @error('deduction')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
         @enderror
     </div>
